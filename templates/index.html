@@ -3,7 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Merger</title>
+    <title>Free Online PDF Merger - Merge PDF Files Instantly | No Login Required</title>
+    <meta name="description" content="Free online PDF merger tool. Combine multiple PDF files into one in seconds. No login, no sign-up, no watermarks. Perfect for students and professionals. Drag and drop, reorder, and merge PDFs easily.">
+    <meta name="keywords" content="PDF merger, merge PDF, combine PDF, PDF combiner, free PDF merge, online PDF tool, merge PDF files, PDF joiner, combine PDFs free, no login PDF merge, student PDF tool, merge documents online">
+    <meta name="author" content="PDF Merger">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://pdf-merger.onrender.com/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://pdf-merger.onrender.com/">
+    <meta property="og:title" content="Free Online PDF Merger - Merge PDF Files Instantly">
+    <meta property="og:description" content="Combine multiple PDF files into one in seconds. No login, no sign-up, no watermarks. Free and easy to use.">
+    <meta property="og:image" content="https://pdf-merger.onrender.com/static/og-image.png">
+    <meta property="og:site_name" content="PDF Merger">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://pdf-merger.onrender.com/">
+    <meta name="twitter:title" content="Free Online PDF Merger - Merge PDF Files Instantly">
+    <meta name="twitter:description" content="Combine multiple PDF files into one in seconds. No login, no sign-up, no watermarks. Free and easy to use.">
+    <meta name="twitter:image" content="https://pdf-merger.onrender.com/static/og-image.png">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "PDF Merger",
+        "url": "https://pdf-merger.onrender.com/",
+        "description": "Free online PDF merger tool. Combine multiple PDF files into one in seconds. No login, no sign-up, no watermarks.",
+        "applicationCategory": "UtilityApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "Merge multiple PDF files",
+            "Drag and drop upload",
+            "Reorder PDF pages",
+            "No registration required",
+            "No watermarks",
+            "Free to use"
+        ],
+        "screenshot": "https://pdf-merger.onrender.com/static/og-image.png",
+        "softwareHelp": {
+            "@type": "CreativeWork",
+            "url": "https://pdf-merger.onrender.com/"
+        }
+    }
+    </script>
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -11,6 +63,11 @@
             background: #0f172a;
             color: #e2e8f0;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        main {
+            flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -23,8 +80,29 @@
         h1 {
             text-align: center;
             font-size: 1.8rem;
-            margin-bottom: 2rem;
+            margin-bottom: 0.5rem;
             color: #38bdf8;
+        }
+        .tagline {
+            text-align: center;
+            color: #94a3b8;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        .feature-badge {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 20px;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+            color: #94a3b8;
         }
         .drop-zone {
             border: 2px dashed #475569;
@@ -123,25 +201,100 @@
         }
         .status.success { color: #4ade80; }
         .status.error { color: #f87171; }
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: #64748b;
+            font-size: 0.85rem;
+            border-top: 1px solid #1e293b;
+        }
+        footer a {
+            color: #38bdf8;
+            text-decoration: none;
+        }
+        footer a:hover { text-decoration: underline; }
+        .how-it-works {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: #1e293b;
+            border-radius: 12px;
+        }
+        .how-it-works h2 {
+            font-size: 1.2rem;
+            color: #38bdf8;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            text-align: center;
+        }
+        .step-num {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #38bdf8;
+            margin-bottom: 0.25rem;
+        }
+        .step-text {
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>PDF Merger</h1>
+    <main>
+        <div class="container">
+            <header>
+                <h1>Free Online PDF Merger</h1>
+                <p class="tagline">Combine multiple PDF files into one — fast, free, and easy.</p>
+                <div class="features">
+                    <span class="feature-badge">No Login</span>
+                    <span class="feature-badge">No Sign-up</span>
+                    <span class="feature-badge">No Watermarks</span>
+                    <span class="feature-badge">100% Free</span>
+                </div>
+            </header>
 
-        <div class="drop-zone" id="dropZone">
-            <div class="icon">📄</div>
-            <p>Drag & drop PDFs here or <strong>click to browse</strong></p>
+            <section aria-label="Upload PDFs">
+                <div class="drop-zone" id="dropZone">
+                    <div class="icon">📄</div>
+                    <p>Drag & drop PDFs here or <strong>click to browse</strong></p>
+                </div>
+                <input type="file" id="fileInput" multiple accept=".pdf">
+
+                <ul class="file-list" id="fileList"></ul>
+
+                <button class="btn btn-merge" id="mergeBtn" disabled>Merge PDFs</button>
+                <button class="btn btn-reset" id="resetBtn" style="display:none">Reset</button>
+
+                <p class="status" id="status"></p>
+            </section>
+
+            <section class="how-it-works" aria-label="How it works">
+                <h2>How It Works</h2>
+                <div class="steps">
+                    <div>
+                        <div class="step-num">1</div>
+                        <div class="step-text">Upload your PDF files</div>
+                    </div>
+                    <div>
+                        <div class="step-num">2</div>
+                        <div class="step-text">Reorder them if needed</div>
+                    </div>
+                    <div>
+                        <div class="step-num">3</div>
+                        <div class="step-text">Download merged PDF</div>
+                    </div>
+                </div>
+            </section>
         </div>
-        <input type="file" id="fileInput" multiple accept=".pdf">
+    </main>
 
-        <ul class="file-list" id="fileList"></ul>
-
-        <button class="btn btn-merge" id="mergeBtn" disabled>Merge PDFs</button>
-        <button class="btn btn-reset" id="resetBtn" style="display:none">Reset</button>
-
-        <p class="status" id="status"></p>
-    </div>
+    <footer>
+        <p>PDF Merger &mdash; Free, open source, and built for students. <a href="https://github.com/your-username/pdf-merger" rel="noopener noreferrer">Contribute on GitHub</a></p>
+    </footer>
 
     <script>
         const dropZone = document.getElementById('dropZone');

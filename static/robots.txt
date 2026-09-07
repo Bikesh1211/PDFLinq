@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /upload
+Disallow: /reorder
+Disallow: /merge
+Disallow: /download/
+
+Sitemap: https://pdf-merger.onrender.com/sitemap.xml

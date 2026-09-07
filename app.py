@@ -4,7 +4,7 @@ import shutil
 import time
 import threading
 from datetime import datetime, timedelta
-from flask import Flask, request, send_file, jsonify, render_template
+from flask import Flask, request, send_file, jsonify, render_template, send_from_directory
 from PyPDF2 import PdfMerger
 
 app = Flask(__name__)
@@ -54,6 +54,16 @@ def purge_sessions(max_age_seconds=None):
 @app.route("/")
 def index():
     return render_template("index.html")
+
+
+@app.route("/robots.txt")
+def robots():
+    return send_from_directory("static", "robots.txt", mimetype="text/plain")
+
+
+@app.route("/sitemap.xml")
+def sitemap():
+    return send_from_directory("static", "sitemap.xml", mimetype="application/xml")
 
 
 @app.route("/upload", methods=["POST"])
