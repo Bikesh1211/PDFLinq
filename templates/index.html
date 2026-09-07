@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Merger</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            padding: 2rem;
+        }
+        h1 {
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            color: #38bdf8;
+        }
+        .drop-zone {
+            border: 2px dashed #475569;
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #1e293b;
+        }
+        .drop-zone:hover, .drop-zone.dragover {
+            border-color: #38bdf8;
+            background: #1e3a5f;
+        }
+        .drop-zone p {
+            font-size: 1.1rem;
+            color: #94a3b8;
+        }
+        .drop-zone .icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        input[type="file"] { display: none; }
+        .file-list {
+            list-style: none;
+            margin-top: 1.5rem;
+        }
+        .file-list li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #1e293b;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            cursor: grab;
+            border: 1px solid #334155;
+            transition: background 0.15s;
+        }
+        .file-list li:hover { background: #334155; }
+        .file-list li.dragging { opacity: 0.5; border-color: #38bdf8; }
+        .file-list li .name {
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+            margin-right: 1rem;
+        }
+        .file-list li .remove {
+            background: none;
+            border: none;
+            color: #f87171;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0 0.25rem;
+        }
+        .file-list li .drag-handle {
+            color: #64748b;
+            margin-right: 0.75rem;
+            cursor: grab;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 0.85rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 1rem;
+        }
+        .btn-merge {
+            background: #38bdf8;
+            color: #0f172a;
+        }
+        .btn-merge:hover { background: #7dd3fc; }
+        .btn-merge:disabled {
+            background: #475569;
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
+        .btn-reset {
+            background: transparent;
+            border: 1px solid #475569;
+            color: #94a3b8;
+        }
+        .btn-reset:hover { border-color: #94a3b8; color: #e2e8f0; }
+        .status {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+        .status.success { color: #4ade80; }
+        .status.error { color: #f87171; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PDF Merger</h1>
+
+        <div class="drop-zone" id="dropZone">
+            <div class="icon">📄</div>
+            <p>Drag & drop PDFs here or <strong>click to browse</strong></p>
+        </div>
+        <input type="file" id="fileInput" multiple accept=".pdf">
+
+        <ul class="file-list" id="fileList"></ul>
+
+        <button class="btn btn-merge" id="mergeBtn" disabled>Merge PDFs</button>
+        <button class="btn btn-reset" id="resetBtn" style="display:none">Reset</button>
+
+        <p class="status" id="status"></p>
+    </div>
+
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const fileList = document.getElementById('fileList');
+        const mergeBtn = document.getElementById('mergeBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const status = document.getElementById('status');
+
+        let files = [];
+        let sessionId = null;
+
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+        dropZone.addEventListener('drop', e => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            addFiles(e.dataTransfer.files);
+        });
+        fileInput.addEventListener('change', () => addFiles(fileInput.files));
+
+        function addFiles(fileArray) {
+            for (const f of fileArray) {
+                if (f.name.toLowerCase().endsWith('.pdf') && !files.find(x => x.name === f.name)) {
+                    files.push(f);
+                }
+            }
+            renderList();
+        }
+
+        function renderList() {
+            fileList.innerHTML = '';
+            files.forEach((f, i) => {
+                const li = document.createElement('li');
+                li.draggable = true;
+                li.dataset.index = i;
+                li.innerHTML = `
+                    <span class="drag-handle">⠿</span>
+                    <span class="name">${f.name}</span>
+                    <button class="remove" data-index="${i}">&times;</button>
+                `;
+                li.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', i); li.classList.add('dragging'); });
+                li.addEventListener('dragend', () => li.classList.remove('dragging'));
+                li.addEventListener('dragover', e => e.preventDefault());
+                li.addEventListener('drop', e => {
+                    e.preventDefault();
+                    const from = parseInt(e.dataTransfer.getData('text/plain'));
+                    const to = parseInt(li.dataset.index);
+                    const [moved] = files.splice(from, 1);
+                    files.splice(to, 0, moved);
+                    renderList();
+                });
+                fileList.appendChild(li);
+            });
+
+            fileList.querySelectorAll('.remove').forEach(btn => {
+                btn.addEventListener('click', e => {
+                    files.splice(parseInt(e.target.dataset.index), 1);
+                    renderList();
+                });
+            });
+
+            mergeBtn.disabled = files.length < 2;
+            status.textContent = files.length > 0 ? `${files.length} file(s) selected` : '';
+            status.className = 'status';
+        }
+
+        mergeBtn.addEventListener('click', async () => {
+            mergeBtn.disabled = true;
+            status.textContent = 'Uploading...';
+            status.className = 'status';
+
+            const formData = new FormData();
+            files.forEach(f => formData.append('files', f));
+
+            try {
+                // Upload
+                const uploadRes = await fetch('/upload', { method: 'POST', body: formData });
+                const uploadData = await uploadRes.json();
+                if (uploadData.error) throw new Error(uploadData.error);
+                sessionId = uploadData.session_id;
+
+                // Reorder
+                const order = files.map(f => f.name);
+                await fetch('/reorder', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ session_id: sessionId, order })
+                });
+
+                // Merge
+                status.textContent = 'Merging...';
+                const mergeRes = await fetch('/merge', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ session_id: sessionId })
+                });
+                const mergeData = await mergeRes.json();
+                if (mergeData.error) throw new Error(mergeData.error);
+
+                // Download
+                window.location.href = mergeData.download_url;
+                status.textContent = 'Download started!';
+                status.className = 'status success';
+                resetBtn.style.display = 'block';
+            } catch (err) {
+                status.textContent = err.message || 'Something went wrong';
+                status.className = 'status error';
+                mergeBtn.disabled = false;
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            files = [];
+            sessionId = null;
+            renderList();
+            resetBtn.style.display = 'none';
+            status.textContent = '';
+            status.className = 'status';
+        });
+    </script>
+</body>
+</html>
